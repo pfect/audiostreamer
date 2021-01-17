@@ -1,0 +1,3 @@
+src/audiostreamer
+src/*.o
+src/.deps/*.Po

@@ -1,0 +1,21 @@
+audiostreamer 
+
+Small utility to stream audio from pulse source to udpsink with gstreamer-1.0.
+
+# Receiving audio
+
+You can receive audio stream with following gst-launch-1.0 command:
+
+gst-launch-1.0 udpsrc \
+caps="application/x-rtp,media=(string)audio,clock-rate=(int)48000,encoding-name=(string)X-GST-OPUS-DRAFT-SPITTKA-00" \
+port=6000 \
+! rtpopusdepay ! opusdec plc=true ! pulsesink sync=false
+
+
+
+REF:
+* https://gstreamer.freedesktop.org/documentation/tutorials/basic/index.html?gi-language=c
+* https://gstreamer.freedesktop.org/documentation/opus/opusenc.html?gi-language=c
+
+
+
