@@ -2,3 +2,5 @@ src/audiostreamer
 src/*.o
 src/.deps/*.Po
 src/.deps
+config.log
+autom4te.cache/requests
