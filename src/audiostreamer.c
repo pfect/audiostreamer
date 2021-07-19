@@ -34,18 +34,30 @@ int
 main (int argc, char *argv[])
 {
 	int usetestsource=0;
+	char *dstip=NULL;
+	int dstport=6000;
+	
 	int c, index;
 	opterr = 0;
 	
-	while ((c = getopt (argc, argv, "t")) != -1)
+	while ((c = getopt (argc, argv, "tha:p:")) != -1)
 	switch (c)
 	{
 	case 't':
 		usetestsource = 1;
 		break;
 	case 'h':
-		fprintf(stderr,"Usage: -t use test source.\n");
+		fprintf(stderr,"\nUsage: -t use test source.\n");
+		fprintf(stderr,"       -a [address]\n");
+		fprintf(stderr,"       -p [port]\n\n");
+		fprintf(stderr,"       default: 0.0.0.0:6000\n\n");
 		return 1;
+	case 'a':
+	    dstip = optarg;
+	    break;
+	case 'p':
+	    dstport = atoi(optarg);
+	    break;
 	break;
 		default:
 		break;
@@ -94,8 +106,14 @@ main (int argc, char *argv[])
 	sink = gst_element_factory_make ("udpsink", NULL);
 	if (sink == NULL)
 		g_error ("Could not create udpsink");
-	g_object_set(G_OBJECT(sink), "host", "0.0.0.0", NULL);
-	g_object_set(G_OBJECT(sink), "port", 6000, NULL);
+	
+	/* destination ip & port */
+	if ( dstip == NULL ) {
+		g_object_set(G_OBJECT(sink), "host", "0.0.0.0", NULL);
+	} else {
+		g_object_set(G_OBJECT(sink), "host", dstip, NULL);
+	}
+	g_object_set(G_OBJECT(sink), "port", dstport, NULL);
 	
 	pipeline = gst_pipeline_new ("test-pipeline");
 
