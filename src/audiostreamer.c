@@ -69,7 +69,7 @@ main (int argc, char *argv[])
 	}
 	
 	/* Initialize gstreamer */
-	GstElement *pipeline, *source, *dynamic, *audioconvert,*audioresample,*opusencoder,*rtppayload, *sink;
+	GstElement *pipeline, *source, *audioconvert,*audioresample,*opusencoder,*rtppayload, *sink;
 	GstCaps *filtercaps;
 	GstBus *bus;
 	GstMessage *msg;
@@ -103,13 +103,6 @@ main (int argc, char *argv[])
 	g_object_set (G_OBJECT ( opusencoder ), "dtx", FALSE, NULL);
 	g_object_set (G_OBJECT ( opusencoder ), "inband-fec", TRUE, NULL);
 	g_object_set (G_OBJECT ( opusencoder ), "packet-loss-percentage", 20, NULL);
-	
-	/* compressor (test) */
-	dynamic = gst_element_factory_make ("audiodynamic", NULL);
-	g_object_set (G_OBJECT ( dynamic ), "characteristics", 0, NULL);
-	g_object_set (G_OBJECT ( dynamic ), "mode", 0, NULL); 
-	g_object_set (G_OBJECT ( dynamic ), "threshold", 0.1 , NULL); 
-	g_object_set (G_OBJECT ( dynamic ), "ratio",2.0 , NULL); 
 	
 	rtppayload = gst_element_factory_make ("rtpopuspay", NULL);
 	
