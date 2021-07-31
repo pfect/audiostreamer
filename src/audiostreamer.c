@@ -36,11 +36,12 @@ main (int argc, char *argv[])
 	int usetestsource=0;
 	char *dstip=NULL;
 	int dstport=6000;
+	char *audiosource=NULL;
 	
 	int c, index;
 	opterr = 0;
 	
-	while ((c = getopt (argc, argv, "tha:p:")) != -1)
+	while ((c = getopt (argc, argv, "tha:p:s:")) != -1)
 	switch (c)
 	{
 	case 't':
@@ -49,9 +50,13 @@ main (int argc, char *argv[])
 	case 'h':
 		fprintf(stderr,"\nUsage: -t use test source.\n");
 		fprintf(stderr,"       -a [address]\n");
-		fprintf(stderr,"       -p [port]\n\n");
+		fprintf(stderr,"       -p [port]\n");
+		fprintf(stderr,"       -s [source] audio source: pulsesrc (default), alsasrc \n\n");
 		fprintf(stderr,"       default: 0.0.0.0:6000\n\n");
 		return 1;
+	case 's':
+	    audiosource = optarg;
+	    break;
 	case 'a':
 	    dstip = optarg;
 	    break;
@@ -74,13 +79,18 @@ main (int argc, char *argv[])
 	/* Selectable source (test vs pulse)  */
 	if ( usetestsource == 1 )
 		source = gst_element_factory_make ("audiotestsrc", NULL); 
+
 	if ( usetestsource == 0 ) {
-		source = gst_element_factory_make ("pulsesrc", NULL);
+		if ( audiosource == NULL ) {
+			source = gst_element_factory_make ("pulsesrc", NULL);
+		} else {
+			source = gst_element_factory_make (audiosource, NULL);
+		}
 	}
 	
 	audioconvert = gst_element_factory_make ("audioconvert", NULL);	
 	GstElement *capsfilter = gst_element_factory_make("capsfilter", NULL);
-	GstCaps *caps = gst_caps_from_string ("audio/x-raw,channels=1,depth=16,width=16,rate=44100");
+	GstCaps *caps = gst_caps_from_string ("audio/x-raw,channels=2,depth=16,width=16,rate=48000"); // 1 44100
 	g_object_set (capsfilter, "caps", caps, NULL);
 	gst_caps_unref(caps);
 	audioresample = gst_element_factory_make ("audioresample", NULL);
